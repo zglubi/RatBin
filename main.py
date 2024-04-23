@@ -43,40 +43,37 @@ def main(maze: list[list[str]], pos_self: tuple[int, int], pos_enemy: tuple[int,
                 new_pos = (pos[0] + delta[0], pos[1] + delta[1])
 
                 # Détection du contenu de la tuile
-                match maze[new_pos[1]][new_pos[0]]:
+                if maze[new_pos[1]][new_pos[0]] == " ":
 
-                    # Si la tuile est un espace vide
-                    case " ":
+                    # On répertorie sur cette tuile d'où l'on vient (Dijktra)
+                    maze[new_pos[1]][new_pos[0]] = move
 
-                        # On répertorie sur cette tuile d'où l'on vient (Dijktra)
-                        maze[new_pos[1]][new_pos[0]] = move
+                    # On ajoute cette tuile à la liste de position active
+                    next_list_pos.append(new_pos)
 
-                        # On ajoute cette tuile à la liste de position active
-                        next_list_pos.append(new_pos)
+                # Si la tuile est une fromage (Yay !)
+                elif maze[new_pos[1]][new_pos[0]] == "$":
 
-                    # Si la tuile est une fromage (Yay !)
-                    case "$":
+                    # On répertorie sur cette tuile d'où l'on vient (Dijktra)
+                    path.append(move)
 
-                        # On répertorie sur cette tuile d'où l'on vient (Dijktra)
+                    # On backtrack jusqu'au point de départ
+                    pos = (new_pos[0] - MOVE[move][0], new_pos[1] - MOVE[move][1])
+                    while pos != pos_self:
+
+                        # Litéralement Dijktra
+
+                        # Là d'où on vient
+                        move = maze[pos[1]][pos[0]]
+
+                        # Ajout de cette provenance à l'itinéraire
                         path.append(move)
 
-                        # On backtrack jusqu'au point de départ
-                        pos = (new_pos[0] - MOVE[move][0], new_pos[1] - MOVE[move][1])
-                        while pos != pos_self:
+                        # On se déplace (en marche arrière)
+                        pos = (pos[0] - MOVE[move][0], pos[1] - MOVE[move][1])
 
-                            # Litéralement Dijktra
-
-                            # Là d'où on vient
-                            move = maze[pos[1]][pos[0]]
-
-                            # Ajout de cette provenance à l'itinéraire
-                            path.append(move)
-
-                            # On se déplace (en marche arrière)
-                            pos = (pos[0] - MOVE[move][0], pos[1] - MOVE[move][1])
-
-                        # Return de la première (dernière ajouté) étape de l'itinéraire et on la retire
-                        return path.pop()
+                    # Return de la première (dernière ajouté) étape de l'itinéraire et on la retire
+                    return path.pop()
 
         # Nouvelles positions
         list_pos = tuple(next_list_pos)
